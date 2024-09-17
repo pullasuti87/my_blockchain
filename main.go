@@ -37,26 +37,60 @@ func FirstBlock() *Block {
 	firstBlock := &Block{
 		Id:        0,
 		Timestamp: 1234567890,
-		PrevHash:  "",
-		Hash:      "",
-		Data:      "",
+		PrevHash:  "PrecHash1",
+		Hash:      "Hash",
+		Data:      "Data1",
 	}
 
 	return firstBlock
 }
 
-func CreateBlock() {}
+func CreateBlock(prev *Block, data string) *Block {
+	block := &Block{
+		Id:        prev.Id + 1,
+		Timestamp: 1234567890,
+		// PrevHash:  "",
+		PrevHash: prev.Hash,
+		Data:     data,
+	}
 
-func (bc *Blockchain) AddBlock() {}
+	return block
+}
+
+func (bc *Blockchain) AddBlock(data string) {
+	prevBlock := bc.Chain[len(bc.Chain)-1]
+	newBlock := CreateBlock(prevBlock, data)
+	bc.Chain = append(bc.Chain, newBlock)
+}
+
+func (bc *Blockchain) PrintData() {
+	for _, block := range bc.Chain {
+		fmt.Printf("Id: %d\n", block.Id)
+		fmt.Printf("Timestamp: %d\n", block.Timestamp)
+		fmt.Printf("Previous Hash: %s\n", block.PrevHash)
+		fmt.Printf("Current Hash: %s\n", block.Hash)
+		fmt.Printf("Data: %s\n", block.Data)
+	}
+}
 
 func main() {
-	fmt.Printf("test\n")
+	// fmt.Printf("test\n")
 
-	//	blockchain := &Blockchain{
-	//		Chain: []*Block{FirstBlock()},
-	//	}
-	//
-	//    blockchain.AddBlock()
-	//    blockchain.AddBlock()
+	blockchain := &Blockchain{
+		Chain: []*Block{FirstBlock()},
+	}
+
+	// test
+	if len(blockchain.Chain) != 1 {
+		fmt.Printf("failed to initialize blockchain")
+	} else {
+		fmt.Println("blockchain initialized with firstblock")
+	}
+
+	// blockchain.PrintData()
+
+	blockchain.AddBlock("first added")
+    blockchain.AddBlock("second added")
+	blockchain.PrintData()
 
 }
