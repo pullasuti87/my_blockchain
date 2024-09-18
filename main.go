@@ -2,10 +2,10 @@ package main
 
 import (
 	"crypto/sha256"
-	"fmt"
-	// "time"
 	"encoding/hex"
+	"fmt"
 	"strconv"
+	"time"
 )
 
 /*
@@ -33,14 +33,16 @@ func (b *Block) InitHash() {
 	b.Hash = hex.EncodeToString(hash[:])
 }
 
-func FirstBlock() *Block {
+func InitBlock() *Block {
 	firstBlock := &Block{
 		Id:        0,
-		Timestamp: 1234567890,
-		PrevHash:  "PrecHash1",
-		Hash:      "Hash",
-		Data:      "Data1",
+		Timestamp: time.Now().UnixNano(),
+		PrevHash:  "",
+		Hash:      "",
+		Data:      "init block",
 	}
+
+	firstBlock.InitHash()
 
 	return firstBlock
 }
@@ -48,11 +50,12 @@ func FirstBlock() *Block {
 func CreateBlock(prev *Block, data string) *Block {
 	block := &Block{
 		Id:        prev.Id + 1,
-		Timestamp: 1234567890,
-		// PrevHash:  "",
-		PrevHash: prev.Hash,
-		Data:     data,
+		Timestamp: time.Now().UnixNano(),
+		PrevHash:  prev.Hash,
+		Data:      data,
 	}
+
+	block.InitHash()
 
 	return block
 }
@@ -70,6 +73,8 @@ func (bc *Blockchain) PrintData() {
 		fmt.Printf("Previous Hash: %s\n", block.PrevHash)
 		fmt.Printf("Current Hash: %s\n", block.Hash)
 		fmt.Printf("Data: %s\n", block.Data)
+		fmt.Printf("---------------------\n")
+		fmt.Println()
 	}
 }
 
@@ -77,20 +82,25 @@ func main() {
 	// fmt.Printf("test\n")
 
 	blockchain := &Blockchain{
-		Chain: []*Block{FirstBlock()},
+		Chain: []*Block{InitBlock()},
 	}
 
 	// test
 	if len(blockchain.Chain) != 1 {
 		fmt.Printf("failed to initialize blockchain")
 	} else {
-		fmt.Println("blockchain initialized with firstblock")
+		fmt.Printf("blockchain initialized with firstblock\n")
+		fmt.Println()
 	}
 
 	// blockchain.PrintData()
 
 	blockchain.AddBlock("first added")
-    blockchain.AddBlock("second added")
+	time.Sleep(1 * time.Second)
+	blockchain.AddBlock("second added")
+	time.Sleep(2 * time.Second)
+	blockchain.AddBlock("third added")
+
 	blockchain.PrintData()
 
 }
